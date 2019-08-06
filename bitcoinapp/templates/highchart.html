@@ -1,0 +1,152 @@
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+<script src="http://code.highcharts.com/highcharts.js"></script>
+<div id="container" style="height: 300px">  </div>
+<div class='col-md-2'>
+
+        <div id="msg"></div>
+        <select name="analysis_type" id="type_analysis">
+                <option value="">PLEASE SELCT</option>
+                <option value="transaction" >Transactions</option>
+                <option value="price">Price</option>
+                <option value="gtrends">Google Trends</option>
+                <option value="twittersentiments">Twitter Sentiments</option>
+                
+                </select>
+              </div>
+          
+<!-- <script>
+ document.addEventListener('DOMContentLoaded', function () {
+            Highcharts.chart('container', {
+                chart: {
+                    type: 'line'
+                },
+                title: {
+                    text: 'Fruit Consumption'
+                },
+                xAxis: {
+                    categories: ['Apples', 'Bananas', 'Oranges']
+                },
+                yAxis: {
+                    title: {
+                        text: 'Fruit eaten'
+                    }
+                },
+                series: [{ 
+                    name: 'Jane',
+                    data: [1, 0, 4,-1]
+                }]
+            });
+        });
+
+</script> -->
+
+<script>
+
+
+        $('#type_analysis').on('change', function() {
+        
+            var fromdate = $("#date1").val();
+            var todate = $("#date2").val();
+          
+            // if (fromdate !='' ||  todate !='')
+            // {
+            // var month =  fromdate.split('/')[0] //[0] key is month [1] key is date [2] key is year
+            // var date =  fromdate.split('/')[1]
+            // var year = fromdate.split('/')[2]
+            // var year = year.split(' ')[0];
+            // var year  = year.slice(0,4)
+            // var fromdate = date+"-"+month+"-"+year
+            // console.log(fromdate);
+        
+            // var todate = $("#date2").val();
+            // var monthto =  todate.split('/')[0] //[0] key is month [1] key is date [2] key is year
+            // var dateto =  todate.split('/')[1]
+            // var yearto = todate.split('/')[2]
+            // var yearto = yearto.split(' ')[0];
+            // var yearto  = yearto.slice(0,4)
+            // var todate = dateto+"-"+monthto+"-"+yearto
+            // console.log(todate);
+            // }
+        
+        
+        
+          if (this.value == 'transaction')
+          {
+            // alert( this.value );
+           var endpoint = 'get_data_transaction'
+            get_data(endpoint,fromdate,todate);
+          }
+          else if (this.value == 'price')
+          {
+            // alert( this.value );
+            var endpoint = 'get_data_pricedata'
+            get_data(endpoint,fromdate,todate);
+          }
+          else if (this.value == 'gtrends')
+          {
+            // alert( this.value );
+            var endpoint = "get_data_gtrends"
+            get_data(endpoint,fromdate,todate);
+          }
+          else if (this.value == 'twittersentiments')
+          {
+            // alert( this.value );
+            var endpoint = "high_chart_twitter"
+            get_data(endpoint);
+          }
+          else {
+            alert("No data selected");
+          }
+        });
+
+        
+        
+        
+        
+        function get_data(endpoint,fromdate,todate)
+        {
+            $.ajax({
+                    method:"GET",
+                    url:endpoint,
+                    // data:{"from":fromdate,"to":todate},
+                    success:function(res)
+                    {
+                        // var a = ['1','2','3']
+                        // var result = res['sentiments'].map(function (x) { 
+                        // return parseInt(x, 10); 
+                        // });
+                        // console.log(result);
+                        console.log(res['sentiments']);
+                        Highcharts.chart('container', {
+                        chart: {
+                            type: 'line'
+                        },
+                        title: {
+                            text: 'Fruit Consumption'
+                        },
+                        // xAxis: {
+                        //     categories: ['Apples', 'Bananas', 'Oranges']
+                        // },
+                        yAxis: {
+                            title: {
+                                text: 'Fruit eaten'
+                            }
+                        },
+                        series: [{ 
+                            name: 'Jane',
+                            // turboThreshold:0,
+                            data: [2017-01-21,2019-02-30]
+                        }]
+                    });
+                    },
+                    error:function(res)
+                    {
+                        alert(res)
+                    }
+            });
+            
+        }
+        
+        
+            
+          </script>

@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <script src='https://npmcdn.com/chart.js@latest/dist/Chart.bundle.min.js'></script>
+<script src='https://npmcdn.com/Chart.Zoom.js@latest/Chart.Zoom.min.js'></script>
+
+  <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.min.js"></script> -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css">
+  <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script> -->
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+
+  
+  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.37/css/bootstrap-datetimepicker.min.css">
+          
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script> 
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/2.14.1/moment.min.js"></script> 
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.37/js/bootstrap-datetimepicker.min.js"></script>
+
+
+  <title>My Chart.js Chart</title>
+  <script>
+      $( document ).ready(function() {
+     $('#datetimepicker1').datetimepicker();
+     $('#datetimepicker2').datetimepicker();
+
+
+   });
+         </script>
+</head>
+<body>
+
+  <div class="col-md-12" style="background:black">
+      <nav class="navbar navbar-inverse">
+          <div class="container-fluid">
+            <div class="navbar-header">
+              <a class="navbar-brand" href="#">BITCOIN PREDICTION ANALYSIS</a>
+            </div>
+
+          </div>
+        </nav>
+ 
+</div>
+
+      <div class="container">
+        <div class="row">
+          <div class="card col-md-4" style="margin-top: 31px;">
+            <div class="card-body"><b>Select Filters</b></div>
+            <ul class="nav navbar-nav" style="padding-top:6px">
+                <select class="form-control" name="analysis_type" id="type_analysis">
+                    <option value="">PLEASE SELCT</option>
+                    <option value="transaction" >Transactions</option>
+                    <option value="price">Price</option>
+                    <option value="gtrends">Google Trends</option>
+                    <option value="twittersentiments">Twitter Sentiments</option>
+                    </select>
+            </ul><br>
+            <ul>
+                <label> FROM </label>
+                <div class='input-group date'  id='datetimepicker1' style="width:240px" >
+                    <input type='text' name="fromdate" id="date1" class="form-control" placeholder="FROM"/>
+                    <span class="input-group-addon">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                   </div>
+                   <br>
+                   <label> TO</label>
+                   <div class='input-group date' id='datetimepicker2' style="width:240px" >
+                      <input type='text' name="todate" id="date2" class="form-control" placeholder="TO" />
+                      <span class="input-group-addon">
+                      <span class="glyphicon glyphicon-calendar"></span>
+                      </span>
+                     </div>
+                     <br>
+                     <input type="button" class=" btn btn-success" value="Show Graph" onclick="get_date_range_filter();">
+            </ul>
+          </div>
+  
+                
+      <div class='col-md-8'>
+    <canvas id="myChart"></canvas>
+    </div>
+</div>
+</div>
+  
+
+  <script>
+
+function get_date_range_filter()
+{
+  var fromdate = $("#date1").val();
+    var todate = $("#date2").val();
+
+    if (fromdate !='' &&  todate !='')
+    {
+    var month =  fromdate.split('/')[0] //[0] key is month [1] key is date [2] key is year
+    var date =  fromdate.split('/')[1]
+    var year = fromdate.split('/')[2]
+    var year = year.split(' ')[0];
+    var year  = year.slice(0,4)
+    var fromdate = date+"-"+month+"-"+year
+    // console.log(fromdate);
+
+    var todate = $("#date2").val();
+    var monthto =  todate.split('/')[0] //[0] key is month [1] key is date [2] key is year
+    var dateto =  todate.split('/')[1]
+    var yearto = todate.split('/')[2]
+    var yearto = yearto.split(' ')[0];
+    var yearto  = yearto.slice(0,4)
+    var todate = dateto+"-"+monthto+"-"+yearto
+    // console.log(todate);
+
+      var  type_of_analysis = $("#type_analysis").val();
+
+      // alert(type_of_analysis);
+
+      if (type_of_analysis == 'transaction')
+  {
+    // alert( this.value );
+   var endpoint = 'chart_transactions.csv'
+    get_data(endpoint,fromdate,todate);
+  }
+  else if (type_of_analysis == 'price')
+  {
+    // alert( this.value );
+    var endpoint = 'live_data.csv'
+    get_data(endpoint,fromdate,todate);
+  }
+  else if (type_of_analysis == 'gtrends')
+  {
+    // alert( this.value );
+    var endpoint = "trends.csv"
+    get_data(endpoint,fromdate,todate);
+  }
+  else if (type_of_analysis == 'twittersentiments')
+  {
+    // alert( this.value );
+    var endpoint = "live_tweet.csv"
+    get_data(endpoint,fromdate,todate);
+  }
+  else {
+    alert("No Filter Selected");
+  }
+
+  }
+
+    else
+    {
+      alert("Please select the date range");
+    }
+  
+}
+
+$('#type_analysis').on('change', function() {
+
+    var fromdate = $("#date1").val();
+    var todate = $("#date2").val();
+  
+    if (fromdate !='' ||  todate !='')
+    {
+    var month =  fromdate.split('/')[0] //[0] key is month [1] key is date [2] key is year
+    var date =  fromdate.split('/')[1]
+    var year = fromdate.split('/')[2]
+    var year = year.split(' ')[0];
+    var year  = year.slice(0,4)
+    var fromdate = date+"-"+month+"-"+year
+    // console.log(fromdate);
+
+    var todate = $("#date2").val();
+    var monthto =  todate.split('/')[0] //[0] key is month [1] key is date [2] key is year
+    var dateto =  todate.split('/')[1]
+    var yearto = todate.split('/')[2]
+    var yearto = yearto.split(' ')[0];
+    var yearto  = yearto.slice(0,4)
+    var todate = dateto+"-"+monthto+"-"+yearto
+    // console.log(todate);
+    }
+
+
+
+  if (this.value == 'transaction')
+  {
+    // alert( this.value );
+   var endpoint = 'chart_transactions.csv'
+    get_data(endpoint,fromdate,todate);
+  }
+  else if (this.value == 'price')
+  {
+    // alert( this.value );
+    var endpoint = 'live_data.csv'
+    get_data(endpoint,fromdate,todate);
+  }
+  else if (this.value == 'gtrends')
+  {
+    // alert( this.value );
+    var endpoint = "trends.csv"
+    get_data(endpoint,fromdate,todate);
+  }
+  else if (this.value == 'twittersentiments')
+  {
+    // alert( this.value );
+    var endpoint = "live_tweet.csv"
+    get_data(endpoint,fromdate,todate);
+  }
+  else {
+    alert("No Filter Selected.csv");
+  }
+});
+
+
+
+
+
+function get_data(endpoint,fromdate,todate)
+{
+    // var endpoint = 'get_data_transaction'
+      // alert(fromdate)
+      // alert(endpoint)
+    $.ajax({
+        method:"GET",
+        url:'get_data_transaction',
+        data:{"from":fromdate,"to":todate,"filepath":endpoint},
+        success:function(data)
+        {
+            var myChart =document.getElementById('myChart');
+            console.log(data['sentiments']);
+            var  massPopChart = new Chart(myChart,{
+                type:'line',
+                data:{
+                    labels:data["time"],
+                    datasets:[{
+                        label: "# Analysis of data",
+                        data:data['sentiments'],
+          // backgroundColor:[
+          //   'rgba(255, 99, 132, 0.6)',
+          //   'rgba(54, 162, 235, 0.6)',
+          //   'rgba(255, 206, 86, 0.6)',
+          //   'rgba(75, 192, 192, 0.6)',
+          //   'rgba(153, 102, 255, 0.6)',
+          //   'rgba(255, 159, 64, 0.6)',
+          //   'rgba(255, 99, 132, 0.6)'
+          // ],
+          fill: false,
+          // borderWidth:1,
+          borderColor:"#3e95cd",
+          // hoverBorderWidth:3,
+          // hoverBorderColor:'#000'
+                    }]
+                },
+                options: {
+        scales: {
+            yAxes: [{
+                ticks: {
+                    beginAtZero:true
+                }
+            }]
+        },
+        // Container for pan options
+        pan: {
+            // Boolean to enable panning
+            enabled: true,
+
+            // Panning directions. Remove the appropriate direction to disable 
+            // Eg. 'y' would only allow panning in the y direction
+            mode: 'xy'
+        },
+
+        // Container for zoom options
+        zoom: {
+            // Boolean to enable zooming
+            enabled: true,
+
+            // Zooming directions. Remove the appropriate direction to disable 
+            // Eg. 'y' would only allow zooming in the y direction
+            mode: 'xy',
+        }
+    }
+              
+            })
+        },
+        error:function(err)
+        {
+                alert("Error Loading Data")
+            // console.log(err);
+        }
+
+
+        
+
+    });
+
+}
+
+
+    
+  </script>
+</body>
+</html>
