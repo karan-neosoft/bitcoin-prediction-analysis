@@ -20,7 +20,7 @@ from . import settings
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('',include('bitcoinapp.urls'))
+    path('',include('dashboard.urls'))
 ]
 
 
