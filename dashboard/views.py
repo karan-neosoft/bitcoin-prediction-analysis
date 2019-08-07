@@ -61,10 +61,10 @@ def csv_file_reader(**csv_data):
             else:
                 for i in reader:
                     #date conversion
-                    converted_time = datetime.datetime.strptime(i['Time'], "%y-%m-%d-%H-%M").strftime("%d-%m-%Y %H:%M")
+                    converted_time = datetime.datetime.strptime(i['Time'], "%y-%m-%d-%H-%M").strftime("%d-%m-%Y")
 
                     #check for from and todate from csv with the datepicker
-                    if converted_time >= csv_data['fromdate'] and converted_time <= csv_data['todate'] :
+                    if datetime.datetime.strptime(converted_time,"%d-%m-%Y") >= datetime.datetime.strptime(csv_data['fromdate'],"%d-%m-%Y") and datetime.datetime.strptime(converted_time,"%d-%m-%Y") <= datetime.datetime.strptime(csv_data['todate'],"%d-%m-%Y"):
                         datetime_converted.append(converted_time)
                         sentiments_data.append(i[csv_data['file_headkey']])
     
