@@ -80,9 +80,11 @@
           </div>
   
                 
-      <div class='col-md-8'>
-    <canvas id="myChart"></canvas>
-    </div>
+        <div class='col-md-8'>
+        <div id="chartContainer">
+        <canvas id="myChart"></canvas>
+          </div>
+      </div>
 </div>
 </div>
   
@@ -225,6 +227,8 @@ function get_data(endpoint,fromdate,todate)
         data:{"from":fromdate,"to":todate,"filepath":endpoint},
         success:function(data)
         {
+            document.getElementById("chartContainer").innerHTML = '&nbsp;';
+            document.getElementById("chartContainer").innerHTML = '<canvas id="myChart"></canvas>';
             var myChart =document.getElementById('myChart');
             console.log(data['sentiments']);
             var  massPopChart = new Chart(myChart,{
