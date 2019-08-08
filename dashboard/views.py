@@ -34,8 +34,8 @@ def get_data_transaction(request):
         return JsonResponse(data)
         
     else:
-        fromdate = request.GET['from']+" "+"00:00"
-        todate = request.GET['to']+" "+"00:00"
+        fromdate = request.GET['from'].split(" ")[0]
+        todate = request.GET['to'].split(" ")[0]
         csv_data_params = {"file_path":file_path,"file_headkey":file_headkey,"fromdate":fromdate,"todate":todate}
         # csv file reader function call
         data  = csv_file_reader(**csv_data_params)
